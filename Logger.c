@@ -6,99 +6,92 @@
 #include <string.h>
 #include <fcntl.h>
 
-void logging(const char *action, const char *message);
-void logger();
+void logging(FILE *fp);
 void toUpperCase();
-void printTime();
+void printRes();
 
-int main(int argc, char **argv[])
+int main(int argc, char *argv[])
 {
-    printf("this is argv %s\n", argv[1]);
+    // Require a log file to run
     if (argc != 2)
     {
-        printf("Missing log file\n");
-        return 1;
+        printf("Error: Missing a text file to save log history!\n");
+        exit(1);
     }
     else
     {
-        int fd = open(argv[1], O_CREAT | O_APPEND);
-
-        if (fd < 0)
+        // Open the text file to log in append mode
+        FILE *fp = NULL;
+        fp = fopen(argv[1], "a+");
+        if (fp == NULL)
         {
-            printf("Error opening the file\n");
-            return 1;
+            printf("Error: Opening the log file unsuccessfully!\n");
+            exit(1);
         }
 
-        dup2(fd, 1);
-        logger();
+        // Call logging function to start logging process
+        logging(fp);
+
+        fclose(fp);
+        exit(0);
     }
-        
-   
-    
-    
 }
 
-void logger()
+void logging(FILE *fp)
 {
+    // Declare and obtain time in seconds
+    struct tm *local;
+    char buf[80];
+    time_t currentTime;
+    time(&currentTime);
+
+    // Obtain current date and time
+    local = localtime(&currentTime);
+    strftime(buf, 80, "%Y-%m-%d %H:%M:%S", local);
+
     // Declare necessary variables
     char act[50];
     char msg[100];
 
-    printTime();
-    printf("[START] Logging Started.\n");
-    while (!(strcmp(act, "QUIT") == 0)) // Stop logging if receive "QUIT"
+    // Log begins
+    printRes(fp, buf, "START", "Logging Started");
+
+    while (!(strcmp(act, "QUIT") == 0)) // Logging until it receives "QUIT"
     {
-        // Read from terminal
+        // Read inputs from terminal
         scanf("%s", act);
         toUpperCase(act);
         if (strcmp(act, "QUIT") == 0)
             break;
         scanf("%s", msg);
-        logging(act, msg);
+        printRes(fp, buf, act, msg);
     }
-    printTime();
-    printf("[STOP] Logging Terminated.\n");
+
+    // Log ends
+    printRes(fp, buf, "STOP", "Logging Stopped");
 }
 
-void printTime()
+void printRes(FILE *fp, char *buf, char *act, char *msg)
 {
+    // Write log history to a file
+    fprintf(fp, "%s [%s] %s.\n", buf, act, msg);
 
-    // Declare date and time variables
-    int year, month, day, hour, minute, second;
+    /*
+    To stream the log history on terminal, uncomment the command below:
 
-    // Declare and obtain time in seconds
-    time_t currentTime;
-    time(&currentTime);
+    printf("%s [%s] %s.\n", buf, act, msg);
 
-    // Obtain current date and time
-    struct tm *local = localtime(&currentTime);
-    year = local->tm_year + 1900;
-    month = local->tm_mon + 1;
-    day = local->tm_mday;
-    hour = local->tm_hour;
-    minute = local->tm_min;
-
-    // Print timestamp
-    printf("%d-%02d-%02d %02d:%02d ", year, month, day, hour, minute);
+    */
 }
 
 void toUpperCase(char *src)
 {
 
-    // Format action
-    char upperAct[50];
+    // Format the action tag
     int i = 0;
     while (src[i])
     {
         src[i] = toupper((unsigned char)src[i]);
         i++;
     }
-}
-
-void logging(const char *action, const char *message)
-{
-
-    // Print output
-    printTime();
-    printf("[%s] %s.\n", action, message);
 }
