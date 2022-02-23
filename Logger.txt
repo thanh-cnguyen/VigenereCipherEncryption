@@ -1,0 +1,14 @@
+2022-02-21 23:51 [START] Logging Started.
+[HI] anh.
+[HO] hoooo.
+[HIHIHI] hehehe.
+[STOP] Logging Terminated.
+2022-02-22 00:05:41 [START] Logging Started.
+2022-02-22 00:05:41 [HIHI] hihi.
+2022-02-22 00:05:41 [HOHOH] hoho.
+2022-02-22 00:05:41 [STOP] Logging Terminated.
+2022-02-22 00:22:03 [START] Logging Started.
+2022-02-22 00:22:03 [DFSDF] sdfsdf.
+2022-02-22 00:22:03 [SDF] sdfsdf.
+2022-02-22 00:22:03 [S] quit.
+2022-02-22 00:22:03 [STOP] Logging Terminated.
