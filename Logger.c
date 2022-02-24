@@ -52,6 +52,7 @@ void logging(FILE *fp)
     // Declare necessary variables
     char act[50];
     char msg[100];
+    char dump;
 
     // Log begins
     printRes(fp, buf, "START", "Logging Started");
@@ -63,7 +64,8 @@ void logging(FILE *fp)
         toUpperCase(act);
         if (strcmp(act, "QUIT") == 0)
             break;
-        scanf("%s", msg);
+        scanf("%c",&dump); // This line to remove spaces from last input
+        scanf("%[^\n]", msg);
         printRes(fp, buf, act, msg);
     }
 
