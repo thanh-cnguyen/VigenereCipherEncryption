@@ -56,7 +56,7 @@ void logging(FILE *fp)
     // Log begins
     printRes(fp, buf, "START", "Logging Started");
 
-    while (!(strcmp(act, "QUIT") == 0)) // Logging until it receives "QUIT"
+    while ((strcmp(act, "QUIT") != 0)) // Logging until it receives "QUIT"
     {
         // Read inputs from terminal
         scanf("%s", act);
