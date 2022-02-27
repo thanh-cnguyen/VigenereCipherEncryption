@@ -39,6 +39,8 @@ int main(int argc, char *argv[])
 
 void logging(FILE *fp)
 {
+    /* This method logs run history to a file */
+
     // Declare and obtain time in seconds
     struct tm *local;
     char buf[80];
@@ -49,7 +51,7 @@ void logging(FILE *fp)
     local = localtime(&currentTime);
     strftime(buf, 80, "%Y-%m-%d %H:%M:%S", local);
 
-    // Declare necessary variables
+    // Declare action, message, and space-eater variables
     char act[50];
     char msg[100];
     char dump;
@@ -69,29 +71,30 @@ void logging(FILE *fp)
         printRes(fp, buf, act, msg);
     }
 
-    // Log ends
+    // Log ends prints terminate message
     printRes(fp, buf, "STOP", "Logging Stopped");
 }
 
 void printRes(FILE *fp, char *buf, char *act, char *msg)
 {
-    // Write log history to a file
+    /* This method writes log history to a file */
+
     fprintf(fp, "%s [%s] %s.\n", buf, act, msg);
 
     /*
-    To stream the log history on terminal, uncomment the command below:
-
-    printf("%s [%s] %s.\n", buf, act, msg);
-
+        To display the log history on terminal, 
+        uncomment the command below:
     */
+
+    //printf("%s [%s] %s.\n", buf, act, msg);
 }
 
 void toUpperCase(char *src)
 {
-
-    // Format the action tag
+    /* This method uppercases the src string*/
+    
     int i = 0;
-    while (src[i])
+    while (src[i])  // Format until end of string
     {
         src[i] = toupper((unsigned char)src[i]);
         i++;
