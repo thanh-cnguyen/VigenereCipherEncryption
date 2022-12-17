@@ -1,26 +1,34 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-/* Hold max quantity of 50 */
-#define MAX_SIZE 51
+/* Hold max quantity of 254 */
+#define MAX_SIZE 75
 
 /* List of functions */
 void toUpperCase();
-void encrypting();
+void inputSplit();
+int encrypting();
 void passKey();
 void vigEncrypt();
 void vigDecrypt();
 
 /* List of data structure and public variables */
 char passToUse[MAX_SIZE];
+char output[MAX_SIZE];
 const char alphabetStr[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 int main(int argc, char *argv[])
 {
     // Execute encryption/decryption using Vigenere Cipher
-    encrypting();
+    if (encrypting() != 0)
+    {
+        fprintf(stderr, "Encrypter failed!");
+        exit(1);
+    }
+    return 0;
 }
 
 void toUpperCase(char *src)
@@ -35,59 +43,63 @@ void toUpperCase(char *src)
     }
 }
 
-void encrypting()
+int encrypting()
 {
     /* This method performs encryption/decryption on the message */
 
     // Declare command and space-eater variables
-    char command[7];
-    char augument[MAX_SIZE];
-    char dump;
+    char input[MAX_SIZE];
+    char **args[MAX_SIZE];
 
     // Get commands and message until "QUIT"
-    while ((strcmp(command, "QUIT") != 0))
+    while (1)
     {
-        // Display available Vigenere Cypher commands
-        printf("Encrypter commands: \n1. PASSKEY \n2. ENCRYPT \n3. DECRYPT \n4. QUIT \nPlease enter in format [COMMAND] [message]: ");
+        /*
+            To display available Vigenere Cypher commands
+            uncoomment the command below:
+        */
+
+        // printf("Encrypter commands: \n1. PASSKEY \n2. ENCRYPT \n3. DECRYPT \n4. QUIT \nPlease enter in format [COMMAND] [message]: ");
 
         // Read inputs from terminal
-        scanf("%s", command);
-        toUpperCase(command);
-        scanf("%c", &dump); // This line to remove spaces from last input
-
+        read(STDIN_FILENO, input, MAX_SIZE);
+        toUpperCase(input);
+        inputSplit(input, args);
         // Process commands
-        if (strcmp(command, "QUIT") == 0)
+        if (strcasecmp((char *)args[0], "QUIT") == 0)
+        {
+            printf("Encrypter terminated!\n");
             break;
-        else if (strcasecmp(command, "PASSKEY") == 0) // Set a password to the message
-        {
-            scanf("%[^\n]", augument);
-            toUpperCase(augument);
-            passKey(augument);
         }
-        else if (strcasecmp(command, "ENCRYPT") == 0) // Vigenere encryption
-        {
-            scanf("%[^\n]", augument);
-            toUpperCase(augument);
-            vigEncrypt(augument);
-        }
-        else if (strcasecmp(command, "DECRYPT") == 0) // Vigenere decryption
-        {
-            scanf("%[^\n]", augument);
-            toUpperCase(augument);
-            vigDecrypt(augument);
-        }
+        else if (strcasecmp((char *)args[0], "PASSKEY") == 0) // Set a password to the message
+            passKey(args[1]);
+        else if (strcasecmp((char *)args[0], "ENCRYPT") == 0) // Vigenere encryption
+            vigEncrypt(args[1]);
+        else if (strcasecmp((char *)args[0], "DECRYPT") == 0) // Vigenere decryption
+            vigDecrypt(args[1]);
         else
-            printf("Error: Invalid Command!\nPlease follow the input format.\n");
-        printf("\n");
+            printf("Warning: Invalid Command!\nPlease follow the input format.\n");
     }
+    return 0;
+}
+
+void inputSplit(char *command, char **args)
+{
+    // Process the command
+    args[0] = strtok(command, " \n");
+
+    // Process the message
+    args[1] = strtok(NULL, "\n");
 }
 
 void passKey(char *pass)
 {
     /* This method prepares a password ready for en/de-cryption */
-
+    memset(output, 0, MAX_SIZE); // Reset the output
     strcpy(passToUse, pass);
-    printf("RESULT Password is set.\n");
+    strcpy(output, "RESULT Password is set");
+    write(STDOUT_FILENO, output, MAX_SIZE);
+    printf(".\n");
 }
 
 void vigEncrypt(char *msg)
@@ -98,11 +110,14 @@ void vigEncrypt(char *msg)
     int i;
     char mappedPass[MAX_SIZE];
     char encryptedText[MAX_SIZE];
+    memset(output, 0, MAX_SIZE); // Reset the output
 
     // Verify available password
     if (strcmp(passToUse, "") == 0)
     {
-        printf("ERROR Password not set.\n");
+        strcpy(output, "ERROR Password not set");
+        write(STDOUT_FILENO, output, MAX_SIZE);
+        printf(".\n");
         return;
     }
 
@@ -146,7 +161,10 @@ void vigEncrypt(char *msg)
     }
 
     // Output result
-    printf("RESULT %s\n", encryptedText);
+    strcpy(output, "RESULT ");
+    strcat(output, encryptedText);
+    write(STDOUT_FILENO, output, MAX_SIZE);
+    printf(".\n");
 }
 
 void vigDecrypt(char *msg)
@@ -157,11 +175,14 @@ void vigDecrypt(char *msg)
     int i;
     char mappedPass[MAX_SIZE];
     char decryptedText[MAX_SIZE];
+    memset(output, 0, MAX_SIZE); // Reset the output
 
     // Verify available password
     if (strcmp(passToUse, "") == 0)
     {
-        printf("ERROR Password not set.\n");
+        strcpy(output, "ERROR Password not set");
+        write(STDOUT_FILENO, output, MAX_SIZE);
+        printf(".\n");
         return;
     }
 
@@ -205,5 +226,8 @@ void vigDecrypt(char *msg)
     }
 
     // Output result
-    printf("RESULT %s\n", decryptedText);
+    strcpy(output, "RESULT ");
+    strcat(output, decryptedText);
+    write(STDOUT_FILENO, output, MAX_SIZE);
+    printf(".\n");
 }
