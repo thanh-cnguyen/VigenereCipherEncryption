@@ -2,10 +2,15 @@
 
 CC = gcc
 CFLAGS = -g -Wall
-PROGS = Logger
+PROGS = Logger Driver Encrypter
 
-all:
-	$(CC) $(CFLAGS) $(PROGS).c -o $(PROGS)
+all: logger encrypter driver
+logger:
+	$(CC) $(CFLAGS) Logger.c -o $(PROGS)
+encrypter:
+	$(CC) $(CFLAGS) Encrypter.c -o $(PROGS)
+driver:
+	$(CC) $(CFLAGS) Driver.c -o $(PROGS)
 run:
 	./$(PROGS) $(PROGS).txt
 clr:
