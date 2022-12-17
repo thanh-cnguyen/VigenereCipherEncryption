@@ -6,12 +6,12 @@ PROGS = Logger Driver Encrypter
 
 all: logger encrypter driver
 logger:
-	$(CC) $(CFLAGS) Logger.c -o $(PROGS)
+	$(CC) $(CFLAGS) Logger.c -o Logger
 encrypter:
-	$(CC) $(CFLAGS) Encrypter.c -o $(PROGS)
+	$(CC) $(CFLAGS) Encrypter.c -o Encrypter
 driver:
-	$(CC) $(CFLAGS) Driver.c -o $(PROGS)
+	$(CC) $(CFLAGS) Driver.c -o Driver
 run:
-	./$(PROGS) $(PROGS).txt
+	./Driver output.txt
 clr:
 	rm -f $(PROGS) *.txt
